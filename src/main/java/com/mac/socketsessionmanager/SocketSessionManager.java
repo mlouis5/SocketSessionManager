@@ -27,7 +27,11 @@ public interface SocketSessionManager {
     void removeSession(Session peer);
 
     void sendBasicMessageToLiveSessions(String message) throws IOException;
+    
+    void sendAsyncMessageToLiveSessions(String message) throws IOException;
 
+    boolean sessionExists(Session peer);
+    
     int size();
     
 }

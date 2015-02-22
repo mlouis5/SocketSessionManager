@@ -103,8 +103,32 @@ public class SocketSessionManagerImpl implements SocketSessionManager {
         }
         emptyClosedSessions();
     }
+    
+    @Override
+    public void sendAsyncMessageToLiveSessions(String message) throws IOException {
+        synchronized (peers) {
+            for (Session peer : peers) {
+                if (peer.isOpen()) {
+                    peer.getAsyncRemote().sendText(message);
+                } else {
+                    closedSessions.add(peer);
+                }
+            }
+        }
+        for (Session peer : closedSessions) {
+            peers.remove(peer);
+        }
+        emptyClosedSessions();
+    }
 
     private void emptyClosedSessions() {
         closedSessions.clear();
+    }
+
+    @Override
+    public boolean sessionExists(Session peer) {
+        synchronized (peers) {
+            return peers.contains(peer);
+        }
     }
 }
